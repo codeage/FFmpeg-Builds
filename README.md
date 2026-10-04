@@ -1,3 +1,27 @@
+# FFmpeg 9.0.2 win64 GPL shared builds
+
+This fork of [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds) builds a single configuration
+on GitHub-hosted runners:
+
+| Item | Value |
+|---|---|
+| FFmpeg | tag `n9.0.2` (pinned by `addins/9.0.2.sh`) |
+| Target | `win64` |
+| Variant | `gpl-shared` (GPL, shared libraries) |
+| Dependencies | same scripts and pinned commits as upstream for the 9.0 branch |
+
+Builds run on push to a `builds/**` branch or by manual dispatch (no schedule).
+Each successful run publishes a release named `<version>-win64-gpl-shared-build<run number>`
+with the zip and its SHA-256 checksum.
+
+Changes compared to upstream:
+
+- `addins/9.0.2.sh`: build the `n9.0.2` tag instead of the head of `release/9.0`.
+- `.github/workflows/build.yml`: only the configuration above; no schedule, wiki update or release pruning.
+
+The original upstream README follows.
+
+---
 # FFmpeg Static Auto-Builds
 
 Static Windows (x86_64) and Linux (x86_64) Builds of ffmpeg master and latest release branch.
