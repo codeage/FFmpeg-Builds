@@ -16,7 +16,8 @@ ffbuild_enabled() {
 
 ffbuild_dockerdl() {
     echo "retry-tool sh -c \"rm -rf lame && svn checkout '${SCRIPT_REPO}@${SCRIPT_REV}' lame\" && cd lame"
-    echo "autoreconf -i"
+    # -f: the 3.100 tag ships older autopoint files (config.rpath) that autopoint refuses to replace otherwise
+    echo "autoreconf -fi"
 }
 
 ffbuild_dockerbuild() {
