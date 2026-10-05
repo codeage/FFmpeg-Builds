@@ -4,4 +4,5 @@
 # The libraries stay enabled where they also provide an encoder.
 FF_CONFIGURE_POST+=" --disable-decoder=libopenh264,libopus,libvorbis,libopencore_amrnb"
 # libopencore-amrwb only provides a decoder (native amrwb exists).
-FF_CONFIGURE_POST+=" --disable-libopencore-amrwb"
+FF_CONFIGURE_POST+=" --disable-libopencore-amrwb"# libvmaf stays (libaom is built with CONFIG_TUNE_VMAF and links it); only the filter is removed.
+FF_CONFIGURE_POST+=" --disable-filter=libvmaf"
