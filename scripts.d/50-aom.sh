@@ -5,7 +5,8 @@ SCRIPT_COMMIT="b4ce2cd097b00921b0327bfb5f07b5f8361ade99"
 
 ffbuild_depends() {
     echo base
-    echo vmaf
+    # vmaf can be dropped by an addin (see util/vars.sh); aom then builds without CONFIG_TUNE_VMAF
+    [[ " $FFBUILD_DROP " == *" vmaf "* ]] || echo vmaf
 }
 
 ffbuild_enabled() {
@@ -28,11 +29,16 @@ ffbuild_dockerbuild() {
     # Workaround broken build system
     export CFLAGS="$CFLAGS -pthread -I/opt/ffbuild/include/libvmaf"
 
-    cmake -DCMAKE_TOOLCHAIN_FILE="$FFBUILD_CMAKE_TOOLCHAIN" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$FFBUILD_PREFIX" -DBUILD_SHARED_LIBS=OFF -DENABLE_EXAMPLES=NO -DENABLE_TESTS=NO -DENABLE_TOOLS=NO -DCONFIG_TUNE_VMAF=1 ..
+    local TUNE_VMAF=0
+    pkg-config --exists libvmaf && TUNE_VMAF=1
+
+    cmake -DCMAKE_TOOLCHAIN_FILE="$FFBUILD_CMAKE_TOOLCHAIN" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$FFBUILD_PREFIX" -DBUILD_SHARED_LIBS=OFF -DENABLE_EXAMPLES=NO -DENABLE_TESTS=NO -DENABLE_TOOLS=NO -DCONFIG_TUNE_VMAF=$TUNE_VMAF ..
     make -j$(nproc)
     make install DESTDIR="$FFBUILD_DESTDIR"
 
-    echo "Requires.private: libvmaf" >> "$FFBUILD_DESTPREFIX"/lib/pkgconfig/aom.pc
+    if [[ $TUNE_VMAF == 1 ]]; then
+        echo "Requires.private: libvmaf" >> "$FFBUILD_DESTPREFIX"/lib/pkgconfig/aom.pc
+    fi
 }
 
 ffbuild_configure() {

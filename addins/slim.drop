@@ -5,3 +5,22 @@ rubberband
 libzmq
 lilv
 lcevcdec
+# Libraries that only provide codecs this build does not need (images, unused encoders,
+# a second ARIB decoder). rustdedup only post-processes librsvg/rav1e and must go with them.
+librsvg
+rav1e
+rustdedup
+libjxl
+vvenc
+xavs2
+kvazaar
+openh264
+openapv
+libwebp
+openjpeg
+xvid
+twolame
+opencore-amr
+libaribb24
+# vmaf: with it dropped, aom is built without CONFIG_TUNE_VMAF (see scripts.d/50-aom.sh).
+vmaf

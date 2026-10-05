@@ -19,7 +19,8 @@ Changes compared to upstream:
 - `addins/9.0.2.sh`: build the `n9.0.2` tag instead of the head of `release/9.0`.
 - `patches/9.0.2/`: build fix backported from `release/9.0` (liboapvenc with openapv >= 1.1, upstream commit `a7502e5ff3`), required because the 9.0 dependency set ships openapv 1.1. No functional change.
 - `build.sh`: apply `patches/<addin>/*.patch` after cloning FFmpeg, when that directory exists.
-- `addins/slim.sh`, `addins/slim.drop`: drop libraries that only provide filters (frei0r, vidstab, rubberband, zmq, lv2, lcevc), disable the libvmaf filter (the library stays because libaom links it) and disable wrapper decoders that duplicate a native decoder (libopenh264, libopus, libvorbis, libopencore-amrnb/amrwb); the corresponding encoders are kept.
+- `addins/slim.sh`, `addins/slim.drop`: drop libraries that only provide filters (frei0r, vidstab, rubberband, zmq, lv2, lcevc, vmaf), libraries for codecs this build does not need (librsvg, libjxl, vvenc, rav1e, xavs2, kvazaar, openh264, openapv, libwebp, openjpeg, xvid, twolame, opencore-amr, libaribb24), and the libopus/libvorbis wrapper decoders (native decoders exist; the encoders are kept).
+- `scripts.d/50-aom.sh`: depend on vmaf and enable CONFIG_TUNE_VMAF only when vmaf is available, so vmaf can be dropped.
 - `util/vars.sh`, `generate.sh`: generic support for `addins/<addin>.drop` and `FF_CONFIGURE_POST`.
 - `.github/workflows/build.yml`: only the configuration above; no schedule, wiki update or release pruning.
 
