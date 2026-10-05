@@ -1,4 +1,4 @@
-# FFmpeg 9.0.2 win64 GPL shared builds
+# FFmpeg 9.0.2 win64 GPL shared builds (slim)
 
 This fork of [BtbN/FFmpeg-Builds](https://github.com/BtbN/FFmpeg-Builds) builds a single configuration
 on GitHub-hosted runners:
@@ -7,7 +7,7 @@ on GitHub-hosted runners:
 |---|---|
 | FFmpeg | tag `n9.0.2` (pinned by `addins/9.0.2.sh`) |
 | Target | `win64` |
-| Variant | `gpl-shared` (GPL, shared libraries) |
+| Variant | `gpl-shared` (GPL, shared libraries) with the `slim` addin |
 | Dependencies | same scripts and pinned commits as upstream for the 9.0 branch |
 
 Builds run on push to a `builds/**` branch or by manual dispatch (no schedule).
@@ -19,6 +19,8 @@ Changes compared to upstream:
 - `addins/9.0.2.sh`: build the `n9.0.2` tag instead of the head of `release/9.0`.
 - `patches/9.0.2/`: build fix backported from `release/9.0` (liboapvenc with openapv >= 1.1, upstream commit `a7502e5ff3`), required because the 9.0 dependency set ships openapv 1.1. No functional change.
 - `build.sh`: apply `patches/<addin>/*.patch` after cloning FFmpeg, when that directory exists.
+- `addins/slim.sh`, `addins/slim.drop`: drop libraries that only provide filters (vmaf, frei0r, vidstab, rubberband, zmq, lv2, lcevc) and disable wrapper decoders that duplicate a native decoder (libopenh264, libopus, libvorbis, libopencore-amrnb/amrwb); the corresponding encoders are kept.
+- `util/vars.sh`, `generate.sh`: generic support for `addins/<addin>.drop` and `FF_CONFIGURE_POST`.
 - `.github/workflows/build.yml`: only the configuration above; no schedule, wiki update or release pruning.
 
 The original upstream README follows.
