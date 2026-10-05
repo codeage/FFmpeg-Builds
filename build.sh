@@ -55,7 +55,7 @@ cat <<EOF >"$BUILD_SCRIPT"
         --extra-cflags="\$FF_CFLAGS" --extra-cxxflags="\$FF_CXXFLAGS" --extra-libs="\$FF_LIBS" \
         --extra-ldflags="\$FF_LDFLAGS" --extra-ldexeflags="\$FF_LDEXEFLAGS"'$RPATH_LDEXEFLAGS' \
         --cc="\$CC" --cxx="\$CXX" --ar="\$AR" --ranlib="\$RANLIB" --nm="\$NM" \
-        --extra-version="\$(date +%Y%m%d)" || { cat ffbuild/config.log; exit 1; }
+        --extra-version="\$(date +%Y%m%d)" ${FFBUILD_LINKMAP:+--extra-ldsoflags='-Wl,-Map=\$@.map'} || { cat ffbuild/config.log; exit 1; }
     make -j\$(nproc) V=1
     make install install-doc
 EOF
@@ -63,6 +63,12 @@ EOF
 [[ -t 1 ]] && TTY_ARG="-t" || TTY_ARG=""
 
 docker run --rm -i $TTY_ARG "${UIDARGS[@]}" -v "$PWD/ffbuild":/ffbuild -v "$BUILD_SCRIPT":/build.sh "$IMAGE" bash /build.sh
+
+# Optional linker maps of the shared libraries (FFBUILD_LINKMAP=1), for size analysis.
+if [[ -n "$FFBUILD_LINKMAP" ]]; then
+    mkdir -p artifacts/linkmaps
+    find ffbuild/ffmpeg -name '*.dll.map' -exec cp {} artifacts/linkmaps/ \;
+fi
 
 if [[ -n "$FFBUILD_OUTPUT_DIR" ]]; then
     mkdir -p "$FFBUILD_OUTPUT_DIR"
