@@ -21,6 +21,7 @@ Changes compared to upstream:
 - `build.sh`: apply `patches/<addin>/*.patch` after cloning FFmpeg, when that directory exists.
 - `addins/slim.sh`, `addins/slim.drop`: drop libraries that only provide filters (frei0r, vidstab, rubberband, zmq, lv2, lcevc, vmaf), libraries for codecs this build does not need (librsvg, libjxl, vvenc, rav1e, xavs2, kvazaar, openh264, openapv, libwebp, openjpeg, xvid, twolame, opencore-amr, libaribb24), and the libopus/libvorbis wrapper decoders (native decoders exist; the encoders are kept).
 - `scripts.d/50-aom.sh`: depend on vmaf and enable CONFIG_TUNE_VMAF only when vmaf is available, so vmaf can be dropped.
+- `scripts.d/50-libmp3lame.sh`: LAME 3.100 release instead of a trunk snapshot (4.1 alpha), which was about 13% slower.
 - `util/vars.sh`, `generate.sh`: generic support for `addins/<addin>.drop` and `FF_CONFIGURE_POST`.
 - `.github/workflows/build.yml`: only the configuration above; no schedule, wiki update or release pruning.
 

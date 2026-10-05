@@ -1,6 +1,8 @@
 #!/bin/bash
 
-SCRIPT_REPO="https://svn.code.sf.net/p/lame/svn/trunk/lame"
+# Pinned to the 3.100 release tag (the trunk snapshot used upstream is a 4.1 alpha and encodes ~13% slower).
+# The peg revision only selects the repository state; the tag content is the 3.100 release.
+SCRIPT_REPO="https://svn.code.sf.net/p/lame/svn/tags/RELEASE__3_100/lame"
 SCRIPT_REV="6835"
 
 ffbuild_depends() {
