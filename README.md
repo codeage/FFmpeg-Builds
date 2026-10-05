@@ -17,6 +17,8 @@ with the zip and its SHA-256 checksum.
 Changes compared to upstream:
 
 - `addins/9.0.2.sh`: build the `n9.0.2` tag instead of the head of `release/9.0`.
+- `patches/9.0.2/`: build fix backported from `release/9.0` (liboapvenc with openapv >= 1.1, upstream commit `a7502e5ff3`), required because the 9.0 dependency set ships openapv 1.1. No functional change.
+- `build.sh`: apply `patches/<addin>/*.patch` after cloning FFmpeg, when that directory exists.
 - `.github/workflows/build.yml`: only the configuration above; no schedule, wiki update or release pruning.
 
 The original upstream README follows.

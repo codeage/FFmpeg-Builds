@@ -19,6 +19,11 @@ fi
 rm -rf ffbuild
 mkdir ffbuild
 
+# Optional per-addin source patches (patches/<addins>/*.patch), applied in order after clone.
+if [[ -n "$ADDINS_STR" && -d "patches/$ADDINS_STR" ]]; then
+    cp -r "patches/$ADDINS_STR" ffbuild/patches
+fi
+
 FFMPEG_REPO="${FFMPEG_REPO:-https://github.com/FFmpeg/FFmpeg.git}"
 FFMPEG_REPO="${FFMPEG_REPO_OVERRIDE:-$FFMPEG_REPO}"
 GIT_BRANCH="${GIT_BRANCH:-master}"
@@ -39,6 +44,9 @@ cat <<EOF >"$BUILD_SCRIPT"
 
     git clone --filter=blob:none --branch='$GIT_BRANCH' '$FFMPEG_REPO' ffmpeg
     cd ffmpeg
+    if [[ -d /ffbuild/patches ]]; then
+        for p in /ffbuild/patches/*.patch; do git apply -v "\$p"; done
+    fi
 
     ./configure --prefix=/ffbuild/prefix --pkg-config-flags="--static" \$FFBUILD_TARGET_FLAGS \$FF_CONFIGURE \
         --extra-cflags="\$FF_CFLAGS" --extra-cxxflags="\$FF_CXXFLAGS" --extra-libs="\$FF_LIBS" \
