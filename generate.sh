@@ -48,6 +48,7 @@ exec_dockerstage() {
         STAGENAME="$(basename "$SCRIPT" | sed 's/.sh$//')"
         source util/dl_functions.sh
         source "$SCRIPT"
+        ffbuild_apply_drop
 
         ffbuild_enabled || exit 0
 
@@ -79,6 +80,7 @@ get_stagedeps() {
             STAGENAME="$(basename "$SCRIPT" | sed 's/.sh$//')"
             source util/dl_functions.sh
             source "$SCRIPT"
+            ffbuild_apply_drop
 
             ffbuild_enabled || exit 0
             ffbuild_depends
@@ -123,6 +125,7 @@ get_output() {
     (
         SELF="$1"
         source "$1"
+        ffbuild_apply_drop
         if ffbuild_enabled; then
             ffbuild_$2 || exit 0
         else
@@ -170,6 +173,7 @@ while true; do
         (
             SELF="$SCRIPT"
             source "$SCRIPT"
+            ffbuild_apply_drop
             ffbuild_enabled || exit $?
             to_df "FROM ${STAGELAYER} AS ${CURDEP}"
         ) || continue
@@ -180,6 +184,7 @@ while true; do
                 SELF="$SCRIPT"
                 SELFLAYER="$SUBDEP"
                 source "$SCRIPT"
+                ffbuild_apply_drop
                 ffbuild_enabled || exit 0
                 ffbuild_dockerlayer || exit $?
             )
@@ -214,6 +219,7 @@ for SUBDEP in $(get_stagedeps_recursive "${ENTRYSCRIPT}"); do
         COMBINING="1"
         SELFLAYER="$SUBDEP"
         source "$SCRIPT"
+        ffbuild_apply_drop
         ffbuild_enabled || exit 0
         ffbuild_dockerlayer || exit $?
         TODF="Dockerfile.final" PREVLAYER="$COMBINELAYER" \
@@ -234,6 +240,8 @@ to_df "FROM ${BASELAYER}"
 sort -u < Dockerfile.final >> Dockerfile
 rm Dockerfile.final
 
+# Flags that must win over the per-script --enable flags (e.g. --disable-decoder=...).
+FF_CONFIGURE+=" $FF_CONFIGURE_POST"
 FF_CONFIGURE="$(xargs <<< "$FF_CONFIGURE")"
 FF_CFLAGS="$(xargs <<< "$FF_CFLAGS")"
 FF_CXXFLAGS="$(xargs <<< "$FF_CXXFLAGS")"

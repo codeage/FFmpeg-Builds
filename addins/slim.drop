@@ -1,0 +1,8 @@
+# Dependency scripts disabled by the "slim" addin: libraries that only provide filters.
+vmaf
+frei0r
+vidstab
+rubberband
+libzmq
+lilv
+lcevcdec

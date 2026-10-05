@@ -19,10 +19,13 @@ fi
 rm -rf ffbuild
 mkdir ffbuild
 
-# Optional per-addin source patches (patches/<addins>/*.patch), applied in order after clone.
-if [[ -n "$ADDINS_STR" && -d "patches/$ADDINS_STR" ]]; then
-    cp -r "patches/$ADDINS_STR" ffbuild/patches
-fi
+# Optional per-addin source patches (patches/<addin>/*.patch), applied in order after clone.
+for addin in "${ADDINS[@]}"; do
+    if [[ -d "patches/$addin" ]]; then
+        mkdir -p ffbuild/patches
+        cp "patches/$addin"/*.patch ffbuild/patches/
+    fi
+done
 
 FFMPEG_REPO="${FFMPEG_REPO:-https://github.com/FFmpeg/FFmpeg.git}"
 FFMPEG_REPO="${FFMPEG_REPO_OVERRIDE:-$FFMPEG_REPO}"

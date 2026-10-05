@@ -30,6 +30,28 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
+# Dependency scripts listed in addins/<addin>.drop (stage names, one per line, e.g. "vmaf")
+# are treated as disabled for that build: not built, and their ffbuild_unconfigure flags are used.
+FFBUILD_DROP=""
+for addin in "${ADDINS[@]}"; do
+    [[ -f "addins/${addin}.drop" ]] && FFBUILD_DROP+=" $(grep -v '^\s*#' "addins/${addin}.drop" | xargs)"
+done
+
+# Call right after sourcing a dependency script (with SELF set to its path).
+ffbuild_apply_drop() {
+    [[ -n "$FFBUILD_DROP" ]] || return 0
+    local stage
+    if [[ "$(basename "$(dirname "$SELF")")" == "scripts.d" ]]; then
+        stage="$(basename "$SELF" .sh)"
+    else
+        stage="$(basename "$(dirname "$SELF")")"
+    fi
+    stage="${stage#??-}"
+    if [[ " $FFBUILD_DROP " == *" $stage "* ]]; then
+        ffbuild_enabled() { return -1; }
+    fi
+    return 0
+}
 REPO="${GITHUB_REPOSITORY:-btbn/ffmpeg-builds}"
 REPO="${REPO,,}"
 REGISTRY="${REGISTRY_OVERRIDE:-ghcr.io}"

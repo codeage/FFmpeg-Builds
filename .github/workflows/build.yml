@@ -23,7 +23,8 @@ on:
 env:
   DOCKER_BUILDKIT: 1
   TARGET: win64
-  VARIANT: gpl-shared 9.0.2
+  VARIANT: gpl-shared 9.0.2 slim
+  FFVERSION: 9.0.2
 
 jobs:
   build_base:
@@ -169,7 +170,9 @@ jobs:
           provenance: false
           tags: ${{ steps.imagename.outputs.name }}:latest
           cache-to: type=registry,mode=max,ref=${{ steps.imagename.outputs.name }}:cache
-          cache-from: type=registry,ref=${{ steps.imagename.outputs.name }}:cache
+          cache-from: |
+            type=registry,ref=${{ steps.imagename.outputs.name }}:cache
+            type=registry,ref=ghcr.io/${{ github.repository_owner }}/ffmpeg-builds/win64-gpl-shared-9.0.2:cache
 
   build_ffmpeg:
     name: Build ffmpeg
@@ -218,10 +221,10 @@ jobs:
       - name: Create release
         run: |
           set -xe
-          VER="${VARIANT##* }"
-          TAGNAME="${VER}-${TARGET}-gpl-shared-build${GITHUB_RUN_NUMBER}"
+          VER="${FFVERSION}"
+          TAGNAME="${VER}-${TARGET}-gpl-shared-slim-build${GITHUB_RUN_NUMBER}"
           {
-            echo "FFmpeg ${VER} (tag n${VER}), ${TARGET}, GPL, shared libraries."
+            echo "FFmpeg ${VER} (tag n${VER}), ${TARGET}, GPL, shared libraries, slim (see addins/slim.sh and addins/slim.drop)."
             echo
             echo "Built by run ${GITHUB_RUN_ID} from commit ${GITHUB_SHA}."
             echo
